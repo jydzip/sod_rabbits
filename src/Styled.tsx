@@ -1,13 +1,24 @@
 import { css, createGlobalStyle } from 'styled-components'
 
-export const GlobalStyle = createGlobalStyle`    
-    html::before {
+export const GlobalStyle = createGlobalStyle`
+    @font-face {
+        font-family: 'ANTON';
+        src: url('./fonts/Anton-Regular.ttf');
+    }
+
+    /* html::before {
         content: "";
         width: 100%;
         height: 100%;
         background-size: 400px;
         position: fixed;
         animation: backgroundScroll 100s linear infinite;
+    } */
+
+    html {
+        font-family: ANTON;
+        color: #fff;
+        text-shadow: 1.5px 1.5px 0 #474747, 1.5px -1.5px 0 #474747, -1.5px 1.5px 0 #474747, -1.5px -1.5px 0 #474747, 1.5px 0px 0 #474747, 0px 1.5px 0 #474747, -1.5px 0px 0 #474747, 0px -1.5px 0 #474747;
     }
 
     body {

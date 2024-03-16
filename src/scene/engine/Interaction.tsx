@@ -3,6 +3,8 @@ import SceneManager from '..';
 import Step, { StepEnum, StepLabels } from '../steps/Step';
 import IntroStep from '../steps/IntroStep';
 import EndingStep from '../steps/EndingStep';
+import AStep from '../steps/AStep';
+import BStep from '../steps/BStep';
 
 export const POSITION_STEP_DEFAULT = {
     x: 5,
@@ -44,6 +46,8 @@ class Interaction {
     }
     private initSteps() {
         this.steps[StepEnum.Intro] = new IntroStep(this.scm);
+        this.steps[StepEnum.A] = new AStep(this.scm);
+        this.steps[StepEnum.B] = new BStep(this.scm);
         this.steps[StepEnum.Ending] = new EndingStep(this.scm);
     }
 
@@ -85,3 +89,8 @@ class Interaction {
 }
 
 export default Interaction;
+
+export function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+} 
+  

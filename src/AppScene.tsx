@@ -1,7 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import SceneManager from './scene';
+import HoverView from './HoverView';
+import styled from 'styled-components';
+import RabbitSvg from './RabbitSvg';
 
 TWEEN.default.update();
 
@@ -12,6 +15,8 @@ const AppScene: React.FC = () => {
 
     useEffect(() => {
         if (sceneRef.current) {
+            sceneManager
+
             const scene = sceneManager.scene;
             const camera = sceneManager.getCamera().camera;
             const renderer = sceneManager.getRenderer().renderer;
@@ -39,10 +44,16 @@ const AppScene: React.FC = () => {
     }, [sceneManager]);
 
     return (
-        <>
+        <Global>
+            <HoverView />
+            {/* <RabbitSvg /> */}
             <div ref={sceneRef} />
-        </>
+        </Global>
     );
 };
 
 export default AppScene;
+
+const Global = styled.div`
+    position: relative;
+`

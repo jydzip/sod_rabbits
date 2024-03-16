@@ -14,8 +14,12 @@ export default class IntroStep extends Step {
         super(scm);
     }
 
-    play() {
+    async play() {
         this.camera.setCameraPosition(3.4, 0.8, -10.4);
+        this.setRabbitPositionDefault();
+        this.closeHoverView();
+        this.setTitleHoverView("INTRO");
+        this.setFooterHoverView(null);
 
         const tween1 = new TWEEN.Tween(this.camera.camera.position)
             .to(new THREE.Vector3(1.7, 0.8, -4.6), 2000)
@@ -26,7 +30,10 @@ export default class IntroStep extends Step {
             .to(new THREE.Vector3(1.7, 1.8, -4.6), 1000);
         const tween3 = new TWEEN.Tween(this.camera.camera.position)
             .to(POSITION_STEP_DEFAULT, 2000)
-            .delay(700);
+            .delay(700)
+            .onComplete(() => {
+                this.openHoverView();
+            });
 
         tween1.chain(tween2);
         tween2.chain(tween3);

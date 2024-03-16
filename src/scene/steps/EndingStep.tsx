@@ -13,8 +13,15 @@ export default class EndingStep extends Step {
         super(scm);
     }
 
-    play() {
-        this.setPositionDefault()
+    async play() {
+        this.setPositionDefault();
+        this.setRabbitPositionDefault();
+        this.openHoverView();
+        this.setTitleHoverView("ENDING");
+
+        this.setContentHoverView(
+            <></>
+        )
 
         this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.SLEEP);
     }

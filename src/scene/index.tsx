@@ -6,6 +6,7 @@ import Loader from './engine/Loader';
 import Renderer from './engine/Renderer';
 import Camera from './engine/Camera';
 import Interaction from './engine/Interaction';
+import UIManager from './engine/UIManager';
 import SeedScene from './SeedScene';
 
 let lastTimestamp = 0;
@@ -21,6 +22,7 @@ class SceneManager {
     private renderer: Renderer;
     private camera: Camera;
     private interaction: Interaction;
+    public uiManager: UIManager;
     public gui: dat.GUI;
 
     public seedScene: SeedScene;
@@ -28,6 +30,7 @@ class SceneManager {
   
     private constructor() {
       this.gui = new dat.GUI();
+      this.uiManager = new UIManager();
       this.scene = new Scene();
       this.loader = new Loader(this);
       this.renderer = new Renderer(this);
@@ -93,13 +96,13 @@ class SceneManager {
 
     private initGUI() {
       const gui = this.gui;
-      const rabbitFolder = gui.addFolder('Camera');
-      rabbitFolder.add(this.camera.camera.position, 'x');
-      rabbitFolder.add(this.camera.camera.position, 'y');
-      rabbitFolder.add(this.camera.camera.position, 'z');
-      rabbitFolder.add(this.camera.camera.rotation, 'x');
-      rabbitFolder.add(this.camera.camera.rotation, 'y');
-      rabbitFolder.add(this.camera.camera.rotation, 'z');
+      const cameraFolder = gui.addFolder('Camera');
+      cameraFolder.add(this.camera.camera.position, 'x').listen();
+      cameraFolder.add(this.camera.camera.position, 'y').listen();
+      cameraFolder.add(this.camera.camera.position, 'z').listen();
+      cameraFolder.add(this.camera.camera.rotation, 'x').step(0.1).listen().name('Rotation x');
+      cameraFolder.add(this.camera.camera.rotation, 'y').step(0.1).listen().name('Rotation y');
+      cameraFolder.add(this.camera.camera.rotation, 'z').step(0.1).listen().name('Rotation z');
     }
   
     public getLoader(): Loader {

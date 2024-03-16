@@ -21,3 +21,14 @@ class Camera {
 }
 
 export default Camera;
+
+
+// Thanks: https://discourse.threejs.org/t/how-to-converting-world-coordinates-to-2d-mouse-coordinates-in-threejs/2251/3
+export function toScreenPosition(renderer: THREE.WebGLRenderer, obj, camera: THREE.Camera)
+{
+  var vector = new THREE.Vector3();
+  vector.x = ( vector.x + 1) * renderer.domElement.width / 2;
+  vector.y = - ( vector.y - 1) * renderer.domElement.height / 2;
+  vector.z = 0;
+  return vector;
+};
