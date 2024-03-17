@@ -13,12 +13,15 @@ export enum StepEnum {
     Intro,
     A,
     B,
+    Vision,
     Ending
 }
 export const StepLabels = {
     [StepEnum.Null]: 'Null',
     [StepEnum.Intro]: 'Intro',
     [StepEnum.A]: 'A',
+    [StepEnum.B]: 'B',
+    [StepEnum.Vision]: 'Vision',
     [StepEnum.Ending]: 'Ending'
 };
 
@@ -30,6 +33,8 @@ export default class Step {
     public camera: Camera;
     public loader: Loader;
     public seed: SeedScene;
+
+    public isPlaying: boolean = false;
 
     constructor(scm: SceneManager) {
         this.smc = scm;
@@ -44,12 +49,16 @@ export default class Step {
             POSITION_STEP_DEFAULT.y,
             POSITION_STEP_DEFAULT.z
         );
+        this.camera.camera.lookAt(new THREE.Vector3(2, 2, 0));
     }
     public setRabbitPositionDefault() {
         const position = new THREE.Vector3(0, 0, 0);
         const rotation = new THREE.Vector3(0, 0, 0);
         this.smc.seedScene.rabbit.setPosition(position);
         this.smc.seedScene.rabbit.setRotation(rotation);
+    }
+    public setRabbitAnimationDefault() {
+        this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.IDLE01, true, undefined, true);
     }
     public openHoverView() {
         this.smc.uiManager.openHV();
@@ -67,10 +76,29 @@ export default class Step {
         this.smc.uiManager.setFooterHV(element);
     }
 
-    _play() {
+    async _play() {
         console.log(`[STEP#${this.id}] Start ${this.key}`);
         TWEEN.removeAll();
-        this.play()
+        this.isPlaying = true;
+        try {
+            await this.play();
+        } catch (error) {
+            if (error instanceof Error && error.message === 'stopped') {
+                return;
+            } else {
+                throw error;
+            }
+        }
     }
-    play() {}
+    async play() {}
+
+    stop() {
+        this.isPlaying = false;
+    }
+
+    public _() {
+        if (!this.isPlaying) {
+            throw new Error('stopped');
+        }
+    }
 }

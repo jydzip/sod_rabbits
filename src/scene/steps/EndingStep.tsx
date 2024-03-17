@@ -19,10 +19,10 @@ export default class EndingStep extends Step {
         this.openHoverView();
         this.setTitleHoverView("ENDING");
 
+        this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.SLEEP, true, undefined, true);
+
         this.setContentHoverView(
             <></>
         )
-
-        this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.SLEEP);
     }
 }

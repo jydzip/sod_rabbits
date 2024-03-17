@@ -37,7 +37,7 @@ const RabbitSvg: React.FC = () => {
                             duration: 5,
                         }}
                     />
-                    {LINE_PATHS.map((d) => (
+                    {LINE_PATHS.map((d, i) => (
                         <motion.path
                             d={d}
                             className="rabbit_svg__line"
@@ -47,6 +47,7 @@ const RabbitSvg: React.FC = () => {
                                 duration: 3,
                                 delay: 2
                             }}
+                            key={i}
                         />
                     ))}
                 </g>

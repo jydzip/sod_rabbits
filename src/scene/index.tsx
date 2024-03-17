@@ -1,4 +1,4 @@
-import { Vector3, Scene, Object3D } from 'three';
+import { Vector3, Scene, Object3D, Clock } from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import * as dat from 'dat.gui';
 
@@ -24,6 +24,7 @@ class SceneManager {
     private interaction: Interaction;
     public uiManager: UIManager;
     public gui: dat.GUI;
+    private clock: Clock;
 
     public seedScene: SeedScene;
     public DEBUG = true;
@@ -69,23 +70,21 @@ class SceneManager {
     public start() {
       if (!this.initialized || this.started) return;
   
-      const animate = (timestamp: number) => {
+      this.clock = new Clock();
+      const animate = () => {
         requestAnimationFrame(animate);
-
-        this.update(timestamp);
+        this.update();
       };
-      animate(0);
+      animate();
 
       this.interaction.start();
 
       this.started = true;
     }
 
-    private update(timestamp: number) {
-      const dt = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
-
-      this.seedScene.update(dt);
+    private update() {
+      const delta = this.clock.getDelta();
+      this.seedScene.update(delta);
       TWEEN.default.update();
       this.render()
     }

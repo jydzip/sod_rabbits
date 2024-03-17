@@ -1,9 +1,7 @@
 import * as THREE from 'three';
-import * as TWEEN from '@tweenjs/tween.js';
 
 import SceneManager from "..";
 import Step, { StepEnum, StepLabels } from "./Step";
-import { RabbitAnimation } from '../objects/Rabbit';
 import RabbitSvg from '../../RabbitSvg';
 
 export default class AStep extends Step {
@@ -19,20 +17,60 @@ export default class AStep extends Step {
         this.openHoverView();
         this.setTitleHoverView("Step A");
 
-        const rabbit = this.smc.seedScene.rabbit;
         this.setRabbitPositionDefault();
+        this.setRabbitAnimationDefault();
         this.setContentHoverView(
             <></>
         )
         this.setFooterHoverView(<>
             <RabbitSvg />
         </>);
+        this._();
 
-        rabbit.setAnimation(RabbitAnimation.RUN);
-        await rabbit.move(new THREE.Vector3(-2, 0, -2), new THREE.Vector3(0, 4, 0));
-        await rabbit.move(new THREE.Vector3(4, 0, 4));
-        await rabbit.move(new THREE.Vector3(2, 0, 2));
-        await rabbit.move(new THREE.Vector3(-2, 0, -2), new THREE.Vector3(0, -4, 0));
-        rabbit.setAnimation(RabbitAnimation.IDLE01);
+        await this.circleMove();
+    }
+
+    async circleMove() {
+        const rabbit = this.smc.seedScene.rabbit;
+    
+        const startPosition = new THREE.Vector3(0, 0, 0);
+        const radius = 5;
+        const numSegments = 15;
+
+        const instructions: {
+            position: THREE.Vector3;
+            rotation?: THREE.Euler;
+            speed_position?: number;
+            speed_rotation?: number;
+        }[] = [];
+
+        for (let i = 0; i <= numSegments; i++) {
+            const angle = (i / numSegments) * Math.PI * 2;
+            const x = startPosition.x + Math.cos(angle) * radius;
+            const z = startPosition.z + Math.sin(angle) * radius;
+            const position = new THREE.Vector3(x, 0, z);
+            const rotation = new THREE.Euler(0, -angle + Math.PI, 0);
+            instructions.push({
+                position,
+                rotation,
+                speed_position: i == 0 ? 1000 : 350,
+                speed_rotation: i == 0 ? 100 : 200
+            });
+        }
+        const startAngleSecondLoop = (numSegments / numSegments) * Math.PI * 2;
+
+        for (let i = 1; i <= numSegments; i++) {
+            const angle = startAngleSecondLoop + (i / numSegments) * Math.PI * 2;
+            const x = startPosition.x + Math.cos(angle) * radius;
+            const z = startPosition.z + Math.sin(angle) * radius;
+            const position = new THREE.Vector3(x, 0, z);
+            const rotation = new THREE.Euler(0, -angle + Math.PI, 0); 
+            instructions.push({ position, rotation, speed_position: 350, speed_rotation: 200 });
+        }
+
+        instructions.push({ position: startPosition, rotation: new THREE.Euler(0, -13, 0), speed_position: 1000, speed_rotation: 800 });
+
+        await rabbit.move(instructions);
+        this._();
     }
 }

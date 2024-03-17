@@ -14,6 +14,11 @@ class Camera {
   public setCameraPosition(x: number, y: number, z: number) {
     this.camera.position.set(x, y, z);
   }
+  public setCameraRotation(x: number, y: number, z: number) {
+    this.camera.rotation.x = x;
+    this.camera.rotation.y = y;
+    this.camera.rotation.z = z;
+  }
 
   public getCamera(): THREE.PerspectiveCamera {
     return this.camera;

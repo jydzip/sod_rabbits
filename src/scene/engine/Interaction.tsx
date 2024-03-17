@@ -5,6 +5,7 @@ import IntroStep from '../steps/IntroStep';
 import EndingStep from '../steps/EndingStep';
 import AStep from '../steps/AStep';
 import BStep from '../steps/BStep';
+import VisionStep from '../steps/VisionStep';
 
 export const POSITION_STEP_DEFAULT = {
     x: 5,
@@ -24,7 +25,7 @@ class Interaction {
         this.scm = scm;
         this.camera = scm.getCamera().camera;
 
-        this.currentStep = StepEnum.Null;
+        this.currentStep = StepEnum.Intro;
         this.currentLabel = StepLabels[this.currentStep];
         this.steps = {};
         this.initSteps()
@@ -48,6 +49,7 @@ class Interaction {
         this.steps[StepEnum.Intro] = new IntroStep(this.scm);
         this.steps[StepEnum.A] = new AStep(this.scm);
         this.steps[StepEnum.B] = new BStep(this.scm);
+        this.steps[StepEnum.Vision] = new VisionStep(this.scm);
         this.steps[StepEnum.Ending] = new EndingStep(this.scm);
     }
 
@@ -57,6 +59,7 @@ class Interaction {
 
     public playNextStep() {
         if (this.currentStep < Object.keys(this.steps).length) {
+            this.stopCurrentStep();
             this.currentStep++;
             this.steps[this.currentStep]._play();
             this.currentLabel = this.steps[this.currentStep].key;
@@ -65,12 +68,19 @@ class Interaction {
         }
     }
     public playPreviousStep() {
+        this.stopCurrentStep();
         this.currentStep--;
         if (this.currentStep < 1) {
             this.currentStep = 1;
         }
         this.steps[this.currentStep]._play();
         this.currentLabel = this.steps[this.currentStep].key;
+    }
+    public stopCurrentStep() {
+        const currentStep = this.steps[this.currentStep];
+        if (currentStep && currentStep.isPlaying) {
+            currentStep.stop();
+        }
     }
 
     private initGUI() {

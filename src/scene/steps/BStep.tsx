@@ -11,8 +11,8 @@ import { toScreenPosition } from '../engine/Camera';
 const DEBUG_PERSIL = true;
 
 export default class BStep extends Step {
-    key = StepLabels[StepEnum.A];
-    id = StepEnum.A;
+    key = StepLabels[StepEnum.B];
+    id = StepEnum.B;
 
     constructor(scm: SceneManager) {
         super(scm);
@@ -26,13 +26,15 @@ export default class BStep extends Step {
 
         const rabbit = this.smc.seedScene.rabbit;
         this.setRabbitPositionDefault();
-        rabbit.setAnimation(RabbitAnimation.IDLE02);
+        this.setRabbitAnimationDefault();
         this.setContentHoverView(
             <>
                 <PersilImg src='./persil.png' id='persil' />
             </>
         )
+        this._();
         await delay(1000);
+        this._();
         await this.animationPersil();
     }
 
@@ -63,6 +65,7 @@ export default class BStep extends Step {
             divDebug.style.top = `${_y}px`;
             document.body.appendChild(divDebug);
         }
+        this._();
     
         console.log("toScreenPosition()", toScreenPosition(this.smc.getRenderer().renderer, rabbit, this.smc.getCamera().camera));
         const _screen = toScreenPosition(this.smc.getRenderer().renderer, rabbit, this.smc.getCamera().camera);
@@ -79,23 +82,23 @@ export default class BStep extends Step {
             divDebug1.style.top = `${_y_rabbit}px`;
             document.body.appendChild(divDebug1);
         }
+        this._();
 
         const to_x = (_x - _x_rabbit) / 100;
         const to_y = (_y - _y_rabbit) / 100;
-        rabbit.setAnimation(RabbitAnimation.RUN);
-        await rabbit.move(
-            new THREE.Vector3(Math.abs(to_x), Math.abs(to_y), 0),
-            new THREE.Vector3(0, -0.7, 0.2)
-        );
+        await rabbit.move([
+            { position: new THREE.Vector3(Math.abs(to_x), Math.abs(to_y), 0), rotation: new THREE.Vector3(0, -0.7, 0.2) },
+        ]);
+        this._();
         rabbit.setAnimation(RabbitAnimation.IDLE02);
         // @ts-ignore; Exist
         persil.src = './persil_holder.png';
         await delay(500);
-        rabbit.setAnimation(RabbitAnimation.RUN);
-        await rabbit.move(
-            new THREE.Vector3(-Math.abs(to_x), -Math.abs(to_y), 0),
-            new THREE.Vector3(0, 0.7, -0.2)
-        );
+        this._();
+        await rabbit.move([
+            { position: new THREE.Vector3(0, 0, 0), rotation: new THREE.Vector3(0, 0, 0) },
+        ]);
+        this._();
         rabbit.setAnimation(RabbitAnimation.IDLE02);
     }
 

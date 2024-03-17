@@ -24,7 +24,7 @@ export default class IntroStep extends Step {
         const tween1 = new TWEEN.Tween(this.camera.camera.position)
             .to(new THREE.Vector3(1.7, 0.8, -4.6), 2000)
             .onStart(() => {
-                this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.IDLE04, RabbitAnimation.IDLE01);
+                this.smc.seedScene.rabbit.setAnimation(RabbitAnimation.IDLE04, true, RabbitAnimation.IDLE01);
             });
         const tween2 = new TWEEN.Tween(this.camera.camera.position)
             .to(new THREE.Vector3(1.7, 1.8, -4.6), 1000);
