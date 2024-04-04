@@ -1,10 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import SceneManager from './scene';
 import HoverView from './HoverView';
 import styled from 'styled-components';
-import RabbitSvg from './RabbitSvg';
 
 TWEEN.default.update();
 
@@ -18,7 +17,7 @@ const AppScene: React.FC = () => {
             sceneManager
 
             const scene = sceneManager.scene;
-            const camera = sceneManager.getCamera().camera;
+            const cameraManager = sceneManager.getCameraManager().camera;
             const renderer = sceneManager.getRenderer().renderer;
             const interaction = sceneManager.getInteraction();
 
@@ -28,8 +27,8 @@ const AppScene: React.FC = () => {
                 sceneManager.start();
 
                 const handleResize = () => {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
+                    cameraManager.aspect = window.innerWidth / window.innerHeight;
+                    cameraManager.updateProjectionMatrix();
                     renderer.setSize(window.innerWidth, window.innerHeight);
                 };
                 window.addEventListener('resize', handleResize);

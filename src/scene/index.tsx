@@ -4,7 +4,7 @@ import * as dat from 'dat.gui';
 
 import Loader from './engine/Loader';
 import Renderer from './engine/Renderer';
-import Camera from './engine/Camera';
+import CameraManager from './engine/CameraManager';
 import Interaction from './engine/Interaction';
 import UIManager from './engine/UIManager';
 import SeedScene from './SeedScene';
@@ -20,7 +20,7 @@ class SceneManager {
     public scene: Scene;
     private loader: Loader;
     private renderer: Renderer;
-    private camera: Camera;
+    private cameraManager: CameraManager;
     private interaction: Interaction;
     public uiManager: UIManager;
     public gui: dat.GUI;
@@ -35,7 +35,7 @@ class SceneManager {
       this.scene = new Scene();
       this.loader = new Loader(this);
       this.renderer = new Renderer(this);
-      this.camera = new Camera(this);      
+      this.cameraManager = new CameraManager(this);      
       this.interaction = new Interaction(this);
     }
 
@@ -49,14 +49,9 @@ class SceneManager {
       await this.seedScene.init()
       this.add(this.seedScene);
 
-      this.camera.camera.position.set(5, 2.3, -7);
-      // this.camera.camera.position.set(5, 3, -5);
-      this.camera.camera.lookAt(new Vector3(2, 2, 0));
+      this.cameraManager.camera.position.set(5, 2.3, -7);
+      this.cameraManager.camera.lookAt(new Vector3(2, 2, 0));
 
-
-      if (this.DEBUG) {
-        this.initGUI();
-      }
       this.initialized = true;
     }
   
@@ -90,18 +85,11 @@ class SceneManager {
     }
 
     private render() {
-      this.getRenderer().renderer.render(this.scene, this.getCamera().camera);
-    }
+      const cm = this.getCameraManager();
+      const renderer = this.getRenderer().renderer;
 
-    private initGUI() {
-      const gui = this.gui;
-      const cameraFolder = gui.addFolder('Camera');
-      cameraFolder.add(this.camera.camera.position, 'x').listen();
-      cameraFolder.add(this.camera.camera.position, 'y').listen();
-      cameraFolder.add(this.camera.camera.position, 'z').listen();
-      cameraFolder.add(this.camera.camera.rotation, 'x').step(0.1).listen().name('Rotation x');
-      cameraFolder.add(this.camera.camera.rotation, 'y').step(0.1).listen().name('Rotation y');
-      cameraFolder.add(this.camera.camera.rotation, 'z').step(0.1).listen().name('Rotation z');
+      cm.camera.update();
+      renderer.render(this.scene, cm.camera);
     }
   
     public getLoader(): Loader {
@@ -110,8 +98,8 @@ class SceneManager {
     public getRenderer(): Renderer {
       return this.renderer;
     }
-    public getCamera(): Camera {
-      return this.camera;
+    public getCameraManager(): CameraManager {
+      return this.cameraManager;
     }
     public getInteraction(): Interaction {
       return this.interaction;

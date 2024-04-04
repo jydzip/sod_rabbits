@@ -5,7 +5,8 @@ import IntroStep from '../steps/IntroStep';
 import EndingStep from '../steps/EndingStep';
 import AStep from '../steps/AStep';
 import BStep from '../steps/BStep';
-import VisionStep from '../steps/VisionStep';
+import CStep from '../steps/CStep';
+import DStep from '../steps/DStep';
 
 export const POSITION_STEP_DEFAULT = {
     x: 5,
@@ -23,12 +24,13 @@ class Interaction {
     constructor(scm: SceneManager) {
         console.log('[Initialization] Interaction');
         this.scm = scm;
-        this.camera = scm.getCamera().camera;
+        this.camera = scm.getCameraManager().camera;
 
-        this.currentStep = StepEnum.Intro;
+        this.currentStep = StepEnum.D;
         this.currentLabel = StepLabels[this.currentStep];
         this.steps = {};
-        this.initSteps()
+        this.initSteps();
+        this.setStepStatus();
 
         document.addEventListener('keydown', (event) => {
             switch(event.key) {
@@ -37,6 +39,12 @@ class Interaction {
                     break;
                 case 'ArrowLeft':
                     this.playPreviousStep();
+                    break;
+                case 'ArrowDown':
+                    this.playNextStade();
+                    break;
+                case 'ArrowUp':
+                    this.playPreviousStade();
                     break;
             }
         });
@@ -49,7 +57,8 @@ class Interaction {
         this.steps[StepEnum.Intro] = new IntroStep(this.scm);
         this.steps[StepEnum.A] = new AStep(this.scm);
         this.steps[StepEnum.B] = new BStep(this.scm);
-        this.steps[StepEnum.Vision] = new VisionStep(this.scm);
+        this.steps[StepEnum.C] = new CStep(this.scm);
+        this.steps[StepEnum.D] = new DStep(this.scm);
         this.steps[StepEnum.Ending] = new EndingStep(this.scm);
     }
 
@@ -63,6 +72,7 @@ class Interaction {
             this.currentStep++;
             this.steps[this.currentStep]._play();
             this.currentLabel = this.steps[this.currentStep].key;
+            this.setStepStatus();
         } else {
             console.log("No more step.");
         }
@@ -75,12 +85,22 @@ class Interaction {
         }
         this.steps[this.currentStep]._play();
         this.currentLabel = this.steps[this.currentStep].key;
+        this.setStepStatus();
     }
     public stopCurrentStep() {
         const currentStep = this.steps[this.currentStep];
         if (currentStep && currentStep.isPlaying) {
-            currentStep.stop();
+            currentStep._stop();
         }
+    }
+
+    public playNextStade() {
+        const step = this.steps[this.currentStep];
+        if (step) step.playNextStade();
+    }
+    public playPreviousStade() {
+        const step = this.steps[this.currentStep];
+        if (step) step.playPreviousStade();
     }
 
     private initGUI() {
@@ -93,8 +113,14 @@ class Interaction {
             this.currentStep = parseInt(selectedStep);
             if (this.currentStep > 0) {
                 this.steps[this.currentStep]._play();
+                this.setStepStatus();
             }
         });
+    }
+
+    private setStepStatus() {
+        this.scm.uiManager.setStepMax(Object.keys(this.steps).length);
+        this.scm.uiManager.setStep(this.currentStep);
     }
 }
 

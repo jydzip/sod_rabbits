@@ -6,29 +6,50 @@ import SceneManager from "./scene";
 
 const HoverView: React.FC = () => {
     const [open, setOpen] = useState<boolean>(true);
+    const [step, setStep] = useState<number>(1);
+    const [stepMax, setStepMax] = useState<number>(1);
+    const [stade, setStade] = useState<number>(0);
+    const [stadeMax, setStadeMax] = useState<number>(0);
 
     const [title, setTitle] = useState<string>('???');
     const [content, setContent] = useState<JSX.Element>(<>???</>);
     const [footer, setFooter] = useState<JSX.Element>(<>???</>);
+    const [screen, setScreen] = useState<JSX.Element | undefined>();
 
     useEffect(() => {
         const sceneManager = SceneManager.getInstance();
 
         sceneManager.uiManager.openHV = (() => {
             setOpen(true);
-        })
+        });
         sceneManager.uiManager.closeHV = (() => {
             setOpen(false);
-        })
+        });
         sceneManager.uiManager.setTitleHV = ((value) => {
             setTitle(value);
-        })
+        });
         sceneManager.uiManager.setContentHV = ((element) => {
             setContent(element);
-        })
+        });
         sceneManager.uiManager.setFooterHV = ((element) => {
             setFooter(element);
-        })
+        });
+        sceneManager.uiManager.setScreenHV = ((element) => {
+            setScreen(element);
+        });
+
+        sceneManager.uiManager.setStep = ((step) => {
+            setStep(step);
+        });
+        sceneManager.uiManager.setStepMax = ((stepMax) => {
+            setStepMax(stepMax);
+        });
+        sceneManager.uiManager.setStade = ((stade) => {
+            setStade(stade);
+        });
+        sceneManager.uiManager.setStadeMax = ((stadeMax) => {
+            setStadeMax(stadeMax);
+        });
     
         setDebugContent();
     }, [])
@@ -47,7 +68,17 @@ const HoverView: React.FC = () => {
 
     return (
         <GlobalUI>
+            {screen && (
+                screen
+            )}
             <UI>
+                <Status>
+                    <span>{step} / {stepMax}</span>
+                    {stadeMax != 0 && (
+                        <span id="status__stade">{stade} / {stadeMax}</span>
+                    )}
+                </Status>
+                
                 <Borders />
                 <Blur />
             </UI>
@@ -143,6 +174,9 @@ const Content = styled.div`
     & ul {
         list-style-type: circle;
     }
+    & ul li {
+        padding: 3px;
+    }
     & img {
         width: 80%;
         margin-left: 10%;
@@ -158,6 +192,7 @@ const Content = styled.div`
         margin-left: -8px;
         margin-bottom: 8px;
         font-style: italic;
+        margin-top: 5px;
     }
     & span.mark {
         background: #575757;
@@ -190,4 +225,22 @@ const GlobalFooter = styled(motion.div)`
     width: 93.5%;
     height: 25vh;
     left: 3.5%;
+`
+
+const Status = styled.div`
+    position: absolute;
+    color: #fff;
+    right: 2.5%;
+    top: 2%;
+    opacity: 0.4;
+    font-size: 22px;
+    text-align: right;
+
+    & span {
+        display: block;
+    }
+    & span#status__stade {
+        font-size: 15px;
+        margin-right: 2px;
+    }
 `

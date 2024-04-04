@@ -8,8 +8,8 @@ import ObjectGroup from './engine/ObjectGroup';
 
 
 export default class SeedScene extends ObjectGroup {
-    private sky: Sky;
-    private ground: Ground;
+    public sky: Sky;
+    public ground: Ground;
     public rabbit: Rabbit;
 
     constructor() {

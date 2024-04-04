@@ -2,16 +2,16 @@ import * as THREE from 'three';
 
 import ObjectGroup from '../engine/ObjectGroup';
 
-const PLANE_SIZE = 20;
+const PLANE_SIZE = 40;
 const GRASS_WIDTH = 0.1;
 const GRASS_HEIGHT = 0.8;
 const GRASS_HEIGHT_VARIATION = 0.6;
-const GRASS_BLADES = 30000;
+const GRASS_BLADES = 100000;
 
 const timeUniform = { type: 'f', value: 0.0 };
 
 export default class Ground extends ObjectGroup {
-  grassInstances: THREE.Group[] = [];
+  grassInstances: THREE.Mesh[] = [];
   grassUniforms: {
     textures: { value: THREE.Texture[] },
     iTime: {
@@ -102,6 +102,7 @@ export default class Ground extends ObjectGroup {
   
     const mesh = new THREE.Mesh(geom, grassMaterial);
     this.add(mesh);
+    this.grassInstances.push(mesh);
   }
 
   public update(dt: number) {

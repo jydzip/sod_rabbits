@@ -30,4 +30,8 @@ export const GlobalStyle = createGlobalStyle`
         height: 100vh;
         overflow: hidden;
     }
+
+    .dg.main.a {
+        margin-right: 7%;
+    }
 `

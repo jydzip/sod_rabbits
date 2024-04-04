@@ -39,8 +39,10 @@ class Loader {
         this.loaderGLTF.load(
             url,
             (gltf: GLTF) => {
+              console.log(gltf)
               const model = gltf.scene;
               const animations = gltf.animations;
+              console.log(animations)
               resolve([model, animations]);
             },
             undefined,

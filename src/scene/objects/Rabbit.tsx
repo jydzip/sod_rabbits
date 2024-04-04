@@ -3,6 +3,7 @@ import * as TWEEN from '@tweenjs/tween.js';
 
 import ObjectGroup from '../engine/ObjectGroup';
 
+const NAME_PARSLEY_ARMATURE = "ParsleyAmature";
 const SCALE_RABBIT = 7;
 export enum RabbitAnimation {
   NULL = 'pose',
@@ -15,15 +16,33 @@ export enum RabbitAnimation {
   RUN_END = 'run_end',
   WALK = 'walk',
   SLEEP = 'sleep',
+  EAT = 'eat',
+  EAT_PARSLEY = 'eat_parsley'
+}
+
+export interface InstructionMove {
+  position: THREE.Vector3;
+  rotation?: THREE.Euler;
+  speed_position?: number;
+  speed_rotation?: number;
+}
+export interface InstructionAnimation {
+  name: RabbitAnimation,
+  loop: boolean,
+  hideAfter?: THREE.Object3D
 }
 
 export default class Rabbit extends ObjectGroup {
   private mixer?: THREE.AnimationMixer;
   private model?: THREE.Group;
+  public parsley?: THREE.Object3D;
+  headTrack?: THREE.Object3D;
 
   animations: THREE.AnimationClip[] = [];
-  selectedAnimation: string;
-  nextAnimation: string;
+  currentAction: THREE.AnimationAction;
+  selectedAnimation: InstructionAnimation;
+  selectedAnimationName: string;
+  nextAnimation?: InstructionAnimation;
   loopAnimation: boolean;
   
   constructor() {    
@@ -32,7 +51,11 @@ export default class Rabbit extends ObjectGroup {
     this.name = 'rabbit';
     console.log('[OBJECT] Rabbit loaded')
   
-    this.selectedAnimation = RabbitAnimation.NULL;
+    this.selectedAnimation = {
+      name: RabbitAnimation.NULL,
+      loop: true
+    };
+    this.selectedAnimationName = RabbitAnimation.NULL;
   }
   async init() {
     await this.loadModel();
@@ -49,11 +72,31 @@ export default class Rabbit extends ObjectGroup {
       if (this.model) {
         this.remove(this.model);
       }
+      model.children.map((child) => {
+        if (child.name == NAME_PARSLEY_ARMATURE) {
+          child.visible = false;
+          this.parsley = child;
+        }
+      });
+
+      // model.traverse((object) => {
+      //   if (object.name) {
+      //       console.log(object.name);
+      //   }
+      // });
+      // B_Nose_00
+      // Bip01_Head
+      const track = model.getObjectByName('Bip01_Head');
+      this.headTrack = track;
+
       model.scale.set(SCALE_RABBIT, SCALE_RABBIT, SCALE_RABBIT);
       this.mixer = new THREE.AnimationMixer(model);
       this.model = model;
       this.loadAnimations();
-      this.setAnimation(RabbitAnimation.IDLE01, true);
+      this.setAnimation({
+        name: RabbitAnimation.IDLE01,
+        loop: true
+      }, undefined, true);
       this.add(this.model);
     } catch (error) {
       console.error('[ERROR] Loader model', error);
@@ -70,28 +113,46 @@ export default class Rabbit extends ObjectGroup {
   private loadAnimations() {
     for (const animation of Object.values(RabbitAnimation)) {
       const clip = THREE.AnimationClip.findByName(this.animations, animation);
+      if (clip) {
+        console.log(`[ANIMATION] Loaded ${animation}`)
+      }
       const action = this.mixer.clipAction(clip);
       if (animation == RabbitAnimation.IDLE01) {
         action.play();
       }
     }
   }
-
-  async setAnimation(animationName: string, loop = true, nextAnimationName?: string, force = false) {
+  async setAnimation(animation: InstructionAnimation, nextAnimation?: InstructionAnimation, force = false, dualAnimation?: InstructionAnimation) {
+    let loop = animation.loop;
     return new Promise(async (resolve) => {
-      if (!force && animationName == this.selectedAnimation) {
+      console.log(animation.name)
+      if (!force && animation.name == this.selectedAnimation.name) {
         return;
       };
-      console.log(`[RABBIT] Animation ${animationName}${nextAnimationName ? ` -> ${nextAnimationName}` : ''}`);
-      if (this.mixer && this.model) {
-        this.stopAnimation();
-      
-        const clip = THREE.AnimationClip.findByName(this.animations, animationName);
+      console.log(`[RABBIT] Animation ${animation.name}${nextAnimation ? ` -> ${nextAnimation.name}` : ''}`);
+      if (this.mixer && this.model) {    
+        const clip = THREE.AnimationClip.findByName(this.animations, animation.name);
         const action = this.mixer.existingAction(clip);
-        this.selectedAnimation = animationName;
-        this.nextAnimation = nextAnimationName;
+        let clipDual: THREE.AnimationClip;
+        let actionDual: THREE.AnimationAction;
+        if (dualAnimation) {
+          clipDual = THREE.AnimationClip.findByName(this.animations, dualAnimation.name);
+          actionDual = this.mixer.existingAction(clipDual);
+          actionDual.reset();
+          actionDual.setLoop(THREE.LoopOnce, 0);
+        }
 
-        if (nextAnimationName) {
+        this.selectedAnimation = animation;
+        this.selectedAnimationName = animation.name;
+        this.nextAnimation = nextAnimation;
+
+        if (this.currentAction) {
+          this.currentAction.fadeOut(0.2);
+        }
+        action.reset();
+        action.fadeIn(0.2);
+
+        if (nextAnimation) {
           loop = false;
         }
         if (!loop) {
@@ -99,23 +160,70 @@ export default class Rabbit extends ObjectGroup {
         }
         action.clampWhenFinished = true;
         action.enabled = true;
+        this.currentAction = action;
 
         const onAnimationFinished = () => {
           this.mixer.removeEventListener('finished', onAnimationFinished);
-          if (nextAnimationName) {
-            action.stop();
-            this.setAnimation(nextAnimationName, true).then(() => {
-              resolve(true);
-            });
+
+          if (dualAnimation && dualAnimation.hideAfter) {
+            dualAnimation.hideAfter.visible = false;
+          }
+
+          if (nextAnimation) {
+            this.setAnimation(nextAnimation);
+            resolve(true);
           } else {
             resolve(true);
           }
         };
         this.mixer.addEventListener('finished', onAnimationFinished);
         action.play();
+      
+        if (actionDual) {
+          actionDual.play();
+        };
       }
     });
   }
+  // async setAnimation(animationName: string, loop = true, nextAnimationName?: string, force = false) {
+  //   return new Promise(async (resolve) => {
+  //     if (!force && animationName == this.selectedAnimation) {
+  //       return;
+  //     };
+  //     console.log(`[RABBIT] Animation ${animationName}${nextAnimationName ? ` -> ${nextAnimationName}` : ''}`);
+  //     if (this.mixer && this.model) {
+  //       this.stopAnimation();
+      
+  //       const clip = THREE.AnimationClip.findByName(this.animations, animationName);
+  //       const action = this.mixer.existingAction(clip);
+  //       this.selectedAnimation = animationName;
+  //       this.nextAnimation = nextAnimationName;
+
+  //       if (nextAnimationName) {
+  //         loop = false;
+  //       }
+  //       if (!loop) {
+  //         action.setLoop(THREE.LoopOnce, 0);
+  //       }
+  //       action.clampWhenFinished = true;
+  //       action.enabled = true;
+
+  //       const onAnimationFinished = () => {
+  //         this.mixer.removeEventListener('finished', onAnimationFinished);
+  //         if (nextAnimationName) {
+  //           action.stop();
+  //           this.setAnimation(nextAnimationName, true).then(() => {
+  //             resolve(true);
+  //           });
+  //         } else {
+  //           resolve(true);
+  //         }
+  //       };
+  //       this.mixer.addEventListener('finished', onAnimationFinished);
+  //       action.play();
+  //     }
+  //   });
+  // }
   stopAnimation() {
     this.mixer.stopAllAction();
   }
@@ -124,32 +232,45 @@ export default class Rabbit extends ObjectGroup {
     if (!this.model) return;
     this.model.position.set(_position.x, _position.y, _position.z);
   }
-  public setRotation(_rotation: THREE.Vector3) {
+  public setRotation(_rotation: THREE.Euler) {
     if (!this.model) return;
     this.model.rotation.set(_rotation.x, _rotation.y, _rotation.z);
   }
 
-  public async move(instructions: {
-    position: THREE.Vector3,
-    rotation?: THREE.Euler,
-    speed_position?: number,
-    speed_rotation?: number
-  }[]) {
+  public async move(
+    instructions: {
+      position: THREE.Vector3,
+      rotation?: THREE.Euler,
+      speed_position?: number,
+      speed_rotation?: number
+    }[],
+    idleAnimation = RabbitAnimation.IDLE01,
+    idleAnimationWait = false,
+    walk = false
+  ) {
     return new Promise(async (resolve) => {
         if (!this.model) {
-            resolve(true);
-            return;
+          resolve(true);
+          return;
         }
         const model = this.model;
         let previousTween: TWEEN.Tween<any> | null = null;
 
-        this.setAnimation(RabbitAnimation.RUN_BEGIN, true, RabbitAnimation.RUN, true);
+        this.setAnimation(
+          {
+            name: RabbitAnimation.RUN_BEGIN,
+            loop: false
+          },
+          {
+            name: walk ? RabbitAnimation.WALK : RabbitAnimation.RUN,
+            loop: true
+          }
+        );
 
         for (let index = 0; index < instructions.length; index++) {
             const instruction = instructions[index];
             const _speed_position = instruction.speed_position || 900;
             const _position = instruction.position.clone();
-            const _rotation = instruction.rotation ? instruction.rotation.clone() : null;
 
             console.log(`[RABBIT] Move ${index + 1}. X:${_position.x}#Y:${_position.y}#Z:${_position.z}`);
 
@@ -171,8 +292,33 @@ export default class Rabbit extends ObjectGroup {
                 console.log(`[RABBIT] Move ${index + 1}!`);
                 if (index === instructions.length - 1) {
                     console.log(`[RABBIT] Move completed!`);
-                    this.setAnimation(RabbitAnimation.RUN_END, true, RabbitAnimation.IDLE01, false);
-                    resolve(true);
+                    if (idleAnimationWait) {
+                      this.setAnimation(
+                        {
+                          name: RabbitAnimation.RUN_END,
+                          loop: false
+                        },
+                        {
+                          name: idleAnimation,
+                          loop: false
+                        }
+                      ).then(() => {
+                        resolve(true)
+                      });
+                    }
+                    else {
+                      this.setAnimation(
+                        {
+                          name: RabbitAnimation.RUN_END,
+                          loop: false
+                        },
+                        {
+                          name: idleAnimation,
+                          loop: true
+                        }
+                      )
+                      resolve(true);
+                    }
                 }
             });
 
@@ -193,12 +339,19 @@ export default class Rabbit extends ObjectGroup {
     }
   }
 
+  public setParsleyVisible(visible = true) {
+    if (this.parsley) this.parsley.visible = visible;
+  }
+
   private initGUI() {
     const gui = this.scm.gui;
     const rabbitFolder = gui.addFolder('Rabbit');
-    const animationController = rabbitFolder.add(this, 'selectedAnimation', RabbitAnimation).listen().name('Animation');
+    const animationController = rabbitFolder.add(this, 'selectedAnimationName', RabbitAnimation).listen().name('Animation');
     animationController.onChange((value) => {
-      this.setAnimation(value, true, undefined);
+      this.setAnimation({
+        name: value,
+        loop: true,
+      }, undefined, true);
     });
     rabbitFolder.add(this.model.position, 'x').listen();
     rabbitFolder.add(this.model.position, 'y').listen();
