@@ -25,6 +25,7 @@ export default class EndingStep extends Step {
         this.setContentHoverView(
             <></>
         );
+        this.setScreenHoverView(undefined);
         this.setFooterHoverView(
             <>
                 <CardGithub>

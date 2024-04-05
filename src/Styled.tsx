@@ -25,7 +25,7 @@ export const GlobalStyle = createGlobalStyle`
         margin: 0 !important;
         background-size: 12%;
         color: #757575;
-        background-color: #5e6a79;
+        background-color: #5e7978;
         width: 100vw;
         height: 100vh;
         overflow: hidden;
@@ -35,3 +35,11 @@ export const GlobalStyle = createGlobalStyle`
         margin-right: 7%;
     }
 `
+
+export const InfoIco = ({ color = "" }: { color?: string }) => {
+    return <img src={`./info${color ? `_${color}` : ''}.png`} className='ico'/>;
+};
+
+export function capitalize(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

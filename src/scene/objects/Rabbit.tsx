@@ -25,6 +25,7 @@ export interface InstructionMove {
   rotation?: THREE.Euler;
   speed_position?: number;
   speed_rotation?: number;
+  delay?: number;
 }
 export interface InstructionAnimation {
   name: RabbitAnimation,
@@ -33,6 +34,7 @@ export interface InstructionAnimation {
 }
 
 export default class Rabbit extends ObjectGroup {
+  public main: boolean;
   private mixer?: THREE.AnimationMixer;
   private model?: THREE.Group;
   public parsley?: THREE.Object3D;
@@ -45,11 +47,12 @@ export default class Rabbit extends ObjectGroup {
   nextAnimation?: InstructionAnimation;
   loopAnimation: boolean;
   
-  constructor() {    
+  constructor(main = true) {    
     super();
 
     this.name = 'rabbit';
-    console.log('[OBJECT] Rabbit loaded')
+    console.log('[OBJECT] Rabbit loaded');
+    this.main = main;
   
     this.selectedAnimation = {
       name: RabbitAnimation.NULL,
@@ -59,13 +62,13 @@ export default class Rabbit extends ObjectGroup {
   }
   async init() {
     await this.loadModel();
-    if (this.scm.DEBUG) {
+    if (this.smc.DEBUG && this.main) {
       this.initGUI();
     }
   }
 
   async loadModel() {
-    const loader = this.scm.getLoader();
+    const loader = this.smc.getLoader();
     try {
       const [model, animations] = await loader.loadModelAsync(`./models/rabbit.glb`);
       this.animations = animations;
@@ -125,7 +128,6 @@ export default class Rabbit extends ObjectGroup {
   async setAnimation(animation: InstructionAnimation, nextAnimation?: InstructionAnimation, force = false, dualAnimation?: InstructionAnimation) {
     let loop = animation.loop;
     return new Promise(async (resolve) => {
-      console.log(animation.name)
       if (!force && animation.name == this.selectedAnimation.name) {
         return;
       };
@@ -182,6 +184,8 @@ export default class Rabbit extends ObjectGroup {
         if (actionDual) {
           actionDual.play();
         };
+      } else {
+        console.log('[RABBIT] Animation MISSING mixer or model!')
       }
     });
   }
@@ -238,12 +242,7 @@ export default class Rabbit extends ObjectGroup {
   }
 
   public async move(
-    instructions: {
-      position: THREE.Vector3,
-      rotation?: THREE.Euler,
-      speed_position?: number,
-      speed_rotation?: number
-    }[],
+    instructions: InstructionMove[],
     idleAnimation = RabbitAnimation.IDLE01,
     idleAnimationWait = false,
     walk = false
@@ -277,6 +276,9 @@ export default class Rabbit extends ObjectGroup {
             const positionTween = new TWEEN.Tween(model.position)
                 .to(_position, _speed_position)
                 .easing(TWEEN.Easing.Quadratic.Out);
+            if (instruction.delay) {
+              positionTween.delay(instruction.delay);
+            }
 
                 if (instruction.rotation) {
                   const _speed_rotation = instruction.speed_rotation || 700;
@@ -343,9 +345,9 @@ export default class Rabbit extends ObjectGroup {
     if (this.parsley) this.parsley.visible = visible;
   }
 
-  private initGUI() {
-    const gui = this.scm.gui;
-    const rabbitFolder = gui.addFolder('Rabbit');
+  public initGUI() {
+    const gui = this.smc.gui;
+    const rabbitFolder = gui.addFolder(`Rabbit ${!this.main ? ' B' : ''}`);
     const animationController = rabbitFolder.add(this, 'selectedAnimationName', RabbitAnimation).listen().name('Animation');
     animationController.onChange((value) => {
       this.setAnimation({

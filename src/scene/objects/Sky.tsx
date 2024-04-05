@@ -8,12 +8,10 @@ export default class Sky extends ObjectGroup {
 
   constructor() {    
     super();
-
     this.name = 'sky';
+    console.log('[OBJECT] Sky loaded');
 
-    console.log('[OBJECT] Sky loaded')
-
-    const loader = this.scm.getLoader();
+    const loader = this.smc.getLoader();
     const skyTexture = loader.loadTexture('./textures/sky.png');
     const cloud1Texture = loader.loadTexture('./textures/cloud_1.png');
     const cloud2Texture = loader.loadTexture('./textures/cloud_2.png');

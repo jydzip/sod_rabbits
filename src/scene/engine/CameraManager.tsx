@@ -1,9 +1,6 @@
 import * as THREE from 'three';
 import SceneManager from '..';
 import { degToRad } from 'three/src/math/MathUtils';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 
 
 class CameraManager {
@@ -69,7 +66,6 @@ class RabbitCamera extends THREE.PerspectiveCamera {
 
   private headMovementSpeed = 2.1;
   private headMovementAmplitude = 0.1;
-  public composer?: EffectComposer;
 
   constructor(scm: SceneManager, perspectiveParams: CameraParams, panoramaParams: CameraParams) {
     super(perspectiveParams.fov, perspectiveParams.aspect, perspectiveParams.near, perspectiveParams.far);

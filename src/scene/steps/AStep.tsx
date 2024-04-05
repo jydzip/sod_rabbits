@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { InstructionMove } from '../objects/Rabbit';
 import { delay } from '../engine/Interaction';
 import { motion } from 'framer-motion';
+import { InfoIco, capitalize } from '../../Styled';
 
 
 export default class AStep extends Step {
@@ -39,49 +40,99 @@ export default class AStep extends Step {
         this.setRabbitPositionDefault();
         this.setRabbitAnimationDefault();
         // this.cameraManager.setCameraPosition(13, 9, -29);
-        this.setContent("");
-        this.setFooterHoverView(undefined);
+        this.resetContent();
+        this.setFooterHoverView(
+            <>
+            <HeadsTitle>Communication of the rabbit</HeadsTitle>
+            <Heads>
+                <Head>
+                    <img src='head_1.png' />
+                    <span>Curious</span>
+                </Head>
+                <Head>
+                    <img src='head_2.png' />
+                    <span>Alert</span>
+                </Head>
+                <Head>
+                    <img src='head_3.png' />
+                    <span>Relaxed</span>
+                </Head>
+                <Head>
+                    <img src='head_4.png' />
+                    <span>Nervous</span>
+                </Head>
+                <Head>
+                    <img src='head_5.png' />
+                    <span>Sleepy</span>
+                </Head>
+            </Heads>
+            </>
+        );
+        this.setScreenHoverView(undefined);
         this._();
         await this.circleMove();
         this._();
         await delay(1500);
-
         this._();
     }
     stop() {
         this.smc.seedScene.rabbit.setParsleyVisible(false);
     }
 
-    private setContent(part: string) {
+    private resetContent() {
+        this.setContent("", (
+            <>
+                <div className="sub white"><InfoIco /> <span className='vert-ico'>A shy animal, but very curious.</span></div>
+            </>
+        ));
+    }
+    private setContent(part: string, content: JSX.Element = <></>) {
         this.setContentHoverView(
             <>
                 <SvgGlobal>
                     <RabbitSvg part={part} />
                 </SvgGlobal>
-                <Part>{part}</Part>
+                <Part>{capitalize(part)}</Part>
+                {content}
             </>
         )
     }
 
     stade1() {
-        this.setContent("ear");
+        this.setContent("ear", (
+            <ul>
+                <li>Excellent hearing!</li>
+                <li>Regulates body temperature.</li>
+            </ul>
+        ));
     }
     stade1_stop() {
-        this.setContent("");
+        this.resetContent();
     }
 
     stade2() {
-        this.setContent("mustache");
+        this.setContent("mustache", (
+            <ul>
+                <li>Moving in the dark.</li>
+                <li>To measure the space of an opening.</li>
+                <li>Identify the objects, obtacles.</li>
+            </ul>
+        ));
     }
     stade2_stop() {
-        this.setContent("");
+        this.resetContent();
     }
 
     stade3() {
-        this.setContent("claw");
+        this.setContent("claw", (
+            <ul>
+                <li>Powerful jumps~</li>
+                <li>Run very fast.</li>
+            </ul>
+        ));
     }
     stade3_stop() {
-        this.setContent("");
+        this.resetContent();
     }
 
     async circleMove() {
@@ -136,7 +187,34 @@ const SvgGlobal = styled.div`
     width: 100%;
     height: 320px;
     position: relative;
+    margin-top: 10px;
 `
 const Part = styled(motion.div)`
     text-align: center;
+    font-size: 26px;
+`
+
+const HeadsTitle = styled.div`
+    position: absolute;
+    transform: rotate(353deg);
+    margin-top: -20px;
+    margin-left: 55px;
+    opacity: 0.8;
+`
+const Heads = styled.div`
+    display: flex;
+    height: 100%;
+    justify-content: center;
+`
+const Head = styled.div`
+    height: 100%;
+    text-align: center;
+    margin: 0 10px;
+    & span {
+        display: block;
+    }
+    & img {
+        height: 75%;
+        opacity: 0.7;
+    }
 `

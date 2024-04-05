@@ -42,6 +42,9 @@ class SceneManager {
     public add(object: Object3D): void {
       this.scene.add(object);
     }
+    public remove(object: Object3D): void {
+      this.scene.remove(object);
+    }
 
     public async init(): Promise<void> {
       if (this.initialized) return;
@@ -70,17 +73,21 @@ class SceneManager {
         requestAnimationFrame(animate);
         this.update();
       };
-      animate();
 
-      this.interaction.start();
-
-      this.started = true;
+      this.interaction.start().then(() => {
+        this.started = true;
+        animate();
+      });
     }
 
     private update() {
       const delta = this.clock.getDelta();
       this.seedScene.update(delta);
       TWEEN.default.update();
+
+      const step = this.interaction.getCurrentStep();
+      if (step) step.update(delta);
+  
       this.render()
     }
 

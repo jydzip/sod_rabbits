@@ -2,10 +2,10 @@ import { Group } from 'three';
 import SceneManager from '..';
 
 export default class ObjectGroup extends Group {
-  public scm: SceneManager;
+  public smc: SceneManager;
 
   constructor() {
     super();
-    this.scm = SceneManager.getInstance();
+    this.smc = SceneManager.getInstance();
   }
 }

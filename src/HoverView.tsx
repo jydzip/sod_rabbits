@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import SceneManager from "./scene";
 
 const HoverView: React.FC = () => {
-    const [open, setOpen] = useState<boolean>(true);
+    const [open, setOpen] = useState<boolean>(false);
     const [step, setStep] = useState<number>(1);
     const [stepMax, setStepMax] = useState<number>(1);
     const [stade, setStade] = useState<number>(0);
@@ -51,9 +51,8 @@ const HoverView: React.FC = () => {
             setStadeMax(stadeMax);
         });
     
-        setDebugContent();
+        // setDebugContent();
     }, [])
-
     function setDebugContent() {
         setContent(<>
         <ul>
@@ -81,6 +80,7 @@ const HoverView: React.FC = () => {
                 
                 <Borders />
                 <Blur />
+                <TitleProject>SOD Rabbits</TitleProject>
             </UI>
             <AnimatePresence>
             {open && (
@@ -163,6 +163,18 @@ const GlobalContent = styled(motion.div)`
     padding: 10px;
     border: 2px solid #ffffff3b;
     border-radius: 34px 1px 12px 5px;
+
+    &::before {
+        content: '';
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        background-image: url('./patpat_white.png');
+        background-size: 100% 100%;
+        width: 13%;
+        height: 13%;
+        opacity: 0.1;
+    }
 `
 const Title = styled.div`
     font-size: 34px;
@@ -193,6 +205,20 @@ const Content = styled.div`
         margin-bottom: 8px;
         font-style: italic;
         margin-top: 5px;
+    }
+    & .gray_light {
+        color: #b4b4b4 !important;
+    }
+    & .white {
+        color: #fff !important;
+    }
+    & img.ico {
+        width: 22px !important;
+        height: 22px !important;
+        margin: auto !important;
+    }
+    & span.vert-ico {
+        vertical-align: 3px;
     }
     & span.mark {
         background: #575757;
@@ -243,4 +269,14 @@ const Status = styled.div`
         font-size: 15px;
         margin-right: 2px;
     }
+`
+
+const TitleProject = styled.span`
+    position: fixed;
+    bottom: 56px;
+    left: -20px;
+    color: #fff;
+    opacity: 0.3;
+    letter-spacing: 2px;
+    transform: rotate(90deg);
 `

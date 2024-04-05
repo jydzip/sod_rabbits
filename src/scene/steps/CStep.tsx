@@ -7,6 +7,7 @@ import Step, { StepEnum, StepLabels } from "./Step";
 import { RabbitAnimation } from '../objects/Rabbit';
 import { delay } from '../engine/Interaction';
 import { motion } from 'framer-motion';
+import AnimatedText from '../../AnimatedText';
 
 const POSITION_FRONT_CAMERA = new THREE.Vector3(1, 0, -4);
 
@@ -30,7 +31,6 @@ export default class CStep extends Step {
         this.setTitleHoverView("Food");
         this.resetPersil();
 
-        const rabbit = this.smc.seedScene.rabbit;
         this.setRabbitPositionDefault();
         this.setRabbitAnimationDefault();
         this.setContentHoverView(
@@ -39,19 +39,28 @@ export default class CStep extends Step {
                     <img src='./rabbit_alimentation.png' />
                     <div className='lines'>
                         <div className='fruit'>
-                            <span>Fruit</span>
+                            <span><AnimatedText text='Fruit' /></span>
                             <figure>1%</figure>
                         </div>
                         <div className='granule'>
-                            <span>Granule</span>
+                            <span><AnimatedText text='Granule' /></span>
                             <figure>10%</figure>
                         </div>
                         <div className='vegetal'>
-                            <span>Vegetal</span>
+                            <span><AnimatedText text='Vegetal' /></span>
                             <figure>10%</figure>
                         </div>
                         <div className='hay'>
-                            <span>Hay</span>
+                            <span>
+                                <AnimatedText text='Hay' />
+                                <motion.img
+                                    initial={{ rotate: "-15deg" }}
+                                    animate={{ rotate: "10deg" }}
+                                    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse", repeatDelay: .1, ease: "linear" }}
+                                    src='./trophy.png'
+                                    className='trophy'
+                                />
+                            </span>
                             <figure>80%</figure>
                         </div>
                     </div>
@@ -60,7 +69,7 @@ export default class CStep extends Step {
         );
         this.setFooterFoods();
         this._();
-        await delay(1000);
+        await delay(3000);
         this._();
         await this.animationPersil();
     }
@@ -72,13 +81,16 @@ export default class CStep extends Step {
                 transition={{ duration: 7, repeat: Infinity, repeatType: "reverse" }}
             >
                 <BackTrigger />
-                <Trigger
-                    initial={{ scale: 0.5, x: "-50%", y: "-50%" }}
-                    animate={{ scale: [0.5, 1.2, 1], x: "-50%", y: "-50%" }}
-                    transition={{ duration: .3 }}
-                >
-                    TRIGGER WARNING
-                </Trigger>
+                <TriggerGlobal>
+                    <Trigger
+                        initial={{ scale: 0.5, x: "-50%", y: "-50%" }}
+                        animate={{ scale: [0.5, 1.2, 1], x: "-50%", y: "-50%" }}
+                        transition={{ duration: .3 }}
+                    >
+                        <CarrotMachiavelic />
+                        TRIGGER WARNING
+                    </Trigger>
+                </TriggerGlobal>
             </TriggerScreen>
         )
     }
@@ -90,7 +102,7 @@ export default class CStep extends Step {
         const persil = document.getElementById('persil');
         if (!persil) return;
         // @ts-ignore; Exist
-        persil.src = './persil.png';
+        persil.src = './parsley.png';
     }
 
     private async animationPersil() {
@@ -105,7 +117,7 @@ export default class CStep extends Step {
         this._();
 
         // @ts-ignore; Exist
-        persil.src = './persil_holder.png';
+        persil.src = './parsley_holder.png';
         this.setFooterFoods(true);
         this._();
 
@@ -115,9 +127,6 @@ export default class CStep extends Step {
         this.smc.seedScene.rabbit.setParsleyVisible(false);
         this._();
         this.setRabbitAnimationDefault();
-        this._();
-
-        await delay(500);
         this._();
     }
 
@@ -130,12 +139,12 @@ export default class CStep extends Step {
             dataAnimation['animate'] = { scale: [1.1, 0.9],  };
             dataAnimation['initial'] = { scale: 1 };
         }
-        let persil: JSX.Element = (
+        let parsley: JSX.Element = (
             <FoodImg>
                 <motion.img 
                     initial={dataAnimation.initial}
                     animate={dataAnimation.animate}
-                    src='./persil.png'
+                    src='./parsley.png'
                     id='persil'
                 />
                 <span>Parsley</span>
@@ -145,20 +154,20 @@ export default class CStep extends Step {
         this.setFooterHoverView(
             <Foods>
                 <FoodImg>
-                    <img src='./persil.png' />
+                    <img src='./dandelion.png' />
                     <span>Dandelion leaves</span>
                 </FoodImg>
                 <FoodImg>
-                    <img src='./persil.png' />
-                    <span>Chicory</span>
+                    <img src='./chicoree.png' />
+                    <span>Chicoree</span>
                 </FoodImg>
                 <FoodImg>
-                    <img src='./persil.png' />
+                    <img src='./zuchini.png' />
                     <span>Zucchini</span>
                 </FoodImg>
-                {persil}
+                {parsley}
                 <FoodImg>
-                    <img src='./persil.png' />
+                    <img src='./coriander.png' />
                     <span>Coriander</span>
                 </FoodImg>
             </Foods>
@@ -172,6 +181,14 @@ const TriggerScreen = styled(motion.div)`
     height: 100%;
     background: #ff00001c;
     z-index: 100;
+`
+const TriggerGlobal = styled.div`
+    background: url('./background_hexa.png') center center / contain no-repeat;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    margin: 25vh 0px;
+    position: relative;
 `
 const Trigger = styled(motion.div)`
     font-size: 47px;
@@ -211,7 +228,10 @@ const FoodImg = styled.div`
     text-align: center;
     margin: 0 10px;
     & img {
-        width: 100%;
+        max-height: 85%;
+    }
+    & span {
+        display: block;
     }
 `
 
@@ -279,5 +299,38 @@ const FoodVisual = styled.div`
         height: 470px;
         width: 100%;
         top: 0;
+    }
+    & img.trophy {
+        width: 40px !important;
+        height: 40px !important;
+        position: absolute;
+        right: -50px;
+        bottom: -10px;
+    }
+`
+
+const CarrotMachiavelic = styled.figure`
+    width: 100px;
+    height: 100px;
+    background-image: url('./carrot.png');
+    background-size: 100% 100%;
+    position: absolute;
+    z-index: 5;
+    right: -70px;
+    animation: .3s carrotBoom ease-in forwards;
+
+    @keyframes carrotBoom {
+        0% {
+            transform: translateY(-500px) scale(1) rotate(50deg);
+        }
+        60% {
+            transform: translateY(-123px) scale(0.8);
+        }
+        80% {
+            transform: translateY(-160px) translateX(70px) scale(1) rotate(0deg);
+        }
+        100% {
+            transform: translateY(-123px) translateX(70px) scale(1);
+        }
     }
 `

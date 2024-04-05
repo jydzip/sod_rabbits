@@ -7,6 +7,7 @@ import AStep from '../steps/AStep';
 import BStep from '../steps/BStep';
 import CStep from '../steps/CStep';
 import DStep from '../steps/DStep';
+import MainScreen from '../../MainScreen';
 
 export const POSITION_STEP_DEFAULT = {
     x: 5,
@@ -26,13 +27,14 @@ class Interaction {
         this.scm = scm;
         this.camera = scm.getCameraManager().camera;
 
-        this.currentStep = StepEnum.D;
+        this.currentStep = StepEnum.Null;
         this.currentLabel = StepLabels[this.currentStep];
         this.steps = {};
         this.initSteps();
         this.setStepStatus();
 
         document.addEventListener('keydown', (event) => {
+            if (!this.scm.started) return;
             switch(event.key) {
                 case 'ArrowRight':
                     this.playNextStep();
@@ -62,16 +64,27 @@ class Interaction {
         this.steps[StepEnum.Ending] = new EndingStep(this.scm);
     }
 
-    public start() {
-        this.playNextStep()
+    public async start() {
+        if (this.currentStep == 0) {
+            await this.start_main_screen();
+        }
+        this.playNextStep();
+    }
+    private async start_main_screen() {
+        this.scm.uiManager.setScreenHV(<MainScreen />)
+        await waitForEnterKeyPress();
     }
 
+    public getCurrentStep() {
+        return this.steps[this.currentStep];
+    }
     public playNextStep() {
         if (this.currentStep < Object.keys(this.steps).length) {
             this.stopCurrentStep();
             this.currentStep++;
-            this.steps[this.currentStep]._play();
-            this.currentLabel = this.steps[this.currentStep].key;
+            const step = this.getCurrentStep();
+            step._play();
+            this.currentLabel = step.key;
             this.setStepStatus();
         } else {
             console.log("No more step.");
@@ -83,23 +96,24 @@ class Interaction {
         if (this.currentStep < 1) {
             this.currentStep = 1;
         }
-        this.steps[this.currentStep]._play();
-        this.currentLabel = this.steps[this.currentStep].key;
+        const step = this.getCurrentStep();
+        step._play();
+        this.currentLabel = step.key;
         this.setStepStatus();
     }
     public stopCurrentStep() {
-        const currentStep = this.steps[this.currentStep];
-        if (currentStep && currentStep.isPlaying) {
-            currentStep._stop();
+        const step = this.getCurrentStep();
+        if (step && step.isPlaying) {
+            step._stop();
         }
     }
 
     public playNextStade() {
-        const step = this.steps[this.currentStep];
+        const step = this.getCurrentStep();
         if (step) step.playNextStade();
     }
     public playPreviousStade() {
-        const step = this.steps[this.currentStep];
+        const step = this.getCurrentStep();
         if (step) step.playPreviousStade();
     }
 
@@ -112,7 +126,7 @@ class Interaction {
             this.currentLabel = value;
             this.currentStep = parseInt(selectedStep);
             if (this.currentStep > 0) {
-                this.steps[this.currentStep]._play();
+                this.getCurrentStep()._play();
                 this.setStepStatus();
             }
         });
@@ -129,4 +143,14 @@ export default Interaction;
 export function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 } 
-  
+function waitForEnterKeyPress(): Promise<void> {
+    return new Promise<void>((resolve) => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+                document.removeEventListener('keydown', handleKeyDown);
+                resolve();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+    });
+}

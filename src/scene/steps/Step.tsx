@@ -109,6 +109,7 @@ export default class Step {
             await this.play();
         } catch (error) {
             if (error instanceof Error && error.message === 'stopped') {
+                // this._stop();
                 return;
             } else {
                 throw error;
@@ -119,9 +120,14 @@ export default class Step {
 
     _stop() {
         this.isPlaying = false;
-        this.stop()
+        if (this.currentStade > 0) {
+            this.stades[this.currentStade].stop();
+        }
+        this.stop();
     }
     stop() {}
+
+    update(_dt: number) {}
 
     public playNextStade() {
         if (Object.keys(this.stades).length < 1) return;

@@ -22,15 +22,14 @@ export default class Ground extends ObjectGroup {
 
   constructor() {    
     super();
-
     this.name = 'ground';
+    console.log('[OBJECT] Ground loaded');
 
-    console.log('[OBJECT] Ground loaded')
-
-    const textureGrassInter = this.scm.getLoader().loadTexture('./textures/grass_inter.jpg');
-    const heightGrass = this.scm.getLoader().loadTexture('./textures/grass_height.png');
-    const alphaGrass = this.scm.getLoader().loadTexture('./textures/grass_alpha.png');
-    const textureGrass = this.scm.getLoader().loadTexture('./textures/grass.jpg');
+    const loader = this.smc.getLoader();
+    const textureGrassInter = loader.loadTexture('./textures/grass_inter.jpg');
+    const heightGrass = loader.loadTexture('./textures/grass_height.png');
+    const alphaGrass = loader.loadTexture('./textures/grass_alpha.png');
+    const textureGrass = loader.loadTexture('./textures/grass.jpg');
 
     this.grassUniforms = {
       textures: { value: [textureGrassInter] },
@@ -49,7 +48,7 @@ export default class Ground extends ObjectGroup {
     const plane = new THREE.Mesh(geometry, material);
     plane.position.set(0, -1, 0);
     plane.rotateX(4.85)
-    this.scm.add(plane);
+    this.smc.add(plane);
 
     this.addGrass()
   }

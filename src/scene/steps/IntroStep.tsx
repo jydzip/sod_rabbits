@@ -7,8 +7,9 @@ import { RabbitAnimation } from '../objects/Rabbit';
 import { POSITION_STEP_DEFAULT } from '../engine/Interaction';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { InfoIco } from '../../Styled';
 
-const SKIP_CINEMATIC = true;
+const SKIP_CINEMATIC = false;
 
 export default class IntroStep extends Step {
     key = StepLabels[StepEnum.Intro];
@@ -28,9 +29,9 @@ export default class IntroStep extends Step {
                 <ul>
                     <li>Weight <span className="mark">1,2 - 2kg</span></li>
                     <li>Size <span className="mark">20 - 40cm</span></li>
-                    <li>Life expectancy <span className="mark">8 - 12 yers</span></li>
+                    <li>Life expectancy <span className="mark">8 - 12 years</span></li>
                     <li>Number of pups per litter <span className="mark">4 - 8 rabbits</span></li>
-                    <div className="sub">Differs depending on breeds.</div>
+                    <div className="sub"><InfoIco color="gray" /> <span className='vert-ico'>Differs depending on breeds.</span></div>
                 </ul>
 
                 <Map>
@@ -53,14 +54,16 @@ export default class IntroStep extends Step {
                         />
                     </ContentMap>
                 </Map>
-                <div className="sub">Native to Europe, North Africa and Southwest Asia.</div>
+                <div className="sub gray_light"><InfoIco color="gray_light" /> <span className='vert-ico'>Native to Europe, North Africa and Southwest Asia.</span></div>
             </>
         );
-        this.setFooterHoverView(null);
+        this.setScreenHoverView(undefined);
+        this.setFooterHoverView(undefined);
 
         if (!SKIP_CINEMATIC) {
             this.cameraManager.setCameraPosition(3.4, 0.8, -10.4);
             await this.introCinematic();
+            this._();
         } else {
             this.setPositionDefault()
         }
@@ -96,7 +99,7 @@ const Map = styled.div`
     border: 1px solid #ffffff57;
     border-radius: 12px;
     margin-top: 33px;
-    background: #0000001a;
+    background: #0000003b;
     position: relative;
     overflow: hidden;
 
