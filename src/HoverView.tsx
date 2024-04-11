@@ -149,7 +149,7 @@ const Global = styled.div`
 
     color: #fff;
     text-shadow: 1.5px 1.5px 0 #6e6e6e, 1.5px -1.5px 0 #6e6e6e, -1.5px 1.5px 0 #6e6e6e, -1.5px -1.5px 0 #6e6e6e, 1.5px 0px 0 #6e6e6e, 0px 1.5px 0 #6e6e6e, -1.5px 0px 0 #6e6e6e, 0px -1.5px 0 #6e6e6e;
-    font-size: 20px;
+    font-size: 26px;
 `
 const GlobalContent = styled(motion.div)`
     position: absolute;
@@ -171,14 +171,15 @@ const GlobalContent = styled(motion.div)`
         bottom: 10px;
         background-image: url('./patpat_white.png');
         background-size: 100% 100%;
-        width: 13%;
-        height: 13%;
+        width: 80px;
+        height: 80px;
         opacity: 0.1;
     }
 `
 const Title = styled.div`
     font-size: 34px;
     margin-bottom: 10px;
+    border-bottom: 1px solid #ffffff40;
 `
 const Content = styled.div`
     text-align: left;
@@ -196,7 +197,7 @@ const Content = styled.div`
         border-radius: 5px;
     }
     & div.sub {
-        font-size: 14px;
+        font-size: 19px;
         text-shadow: none;
         color: #5d5c5c;
         text-align: center;
@@ -225,7 +226,7 @@ const Content = styled.div`
         padding: 3px 7px;
         box-sizing: border-box;
         border-radius: 7px;
-        font-size: 19px;
+        font-size: 25px;
         margin: 0 5px;
     }
     & .underline {

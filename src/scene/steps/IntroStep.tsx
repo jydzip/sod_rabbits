@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 import SceneManager from "..";
 import Step, { StepEnum, StepLabels } from "./Step";
 import { RabbitAnimation } from '../objects/Rabbit';
 import { POSITION_STEP_DEFAULT } from '../engine/Interaction';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
 import { InfoIco } from '../../Styled';
 
 const SKIP_CINEMATIC = false;
@@ -67,6 +67,14 @@ export default class IntroStep extends Step {
         } else {
             this.setPositionDefault()
         }
+
+        setTimeout(() => {
+            this._();
+            this.setRabbitAnimation(
+                { name: RabbitAnimation.IDLE03, loop: false },
+                { name: RabbitAnimation.IDLE01, loop: true }
+            )
+        }, 2000);
         this.openHoverView();
     }
 

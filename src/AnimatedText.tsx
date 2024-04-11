@@ -1,21 +1,35 @@
 import { useState, useEffect } from 'react';
 
-const AnimatedText = ({ text, ms = 100 }: { text: string, ms?: number }) => {
+const AnimatedText = ({
+  text,
+  ms = 100,
+  className = '',
+  reverse = false
+}: { text: string, ms?: number, className?: string, reverse?: boolean }) => {
   const [animatedText, setAnimatedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(reverse ? text.length : 0);
 
   useEffect(() => {
-    let currentIndex = 0;
+    setAnimatedText('');
+    setCurrentIndex(reverse ? text.length : 0);
+  }, [text]);
+  
+  useEffect(() => {
+    const textLength = text.length;
     const interval = setInterval(() => {
-        if (currentIndex <= text.length) {
-            setAnimatedText(text.slice(0, currentIndex));
-            currentIndex++;
-        } else {
-            clearInterval(interval);
-        }
+      if (!reverse && currentIndex <= textLength) {
+        setAnimatedText(text.slice(0, currentIndex));
+        setCurrentIndex(prevIndex => prevIndex + 1);
+      } else if (reverse && currentIndex >= 0) {
+        setAnimatedText(text.slice(0, currentIndex));
+        setCurrentIndex(prevIndex => prevIndex - 1);
+      } else {
+        clearInterval(interval);
+      }
     }, ms);
     return () => clearInterval(interval);
-  }, [text]);
+  }, [text, currentIndex, ms, reverse]);
 
-  return <span>{animatedText}</span>;
+  return <span className={className}>⠀{animatedText}</span>;
 };
 export default AnimatedText;

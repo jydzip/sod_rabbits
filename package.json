@@ -1,6 +1,6 @@
 {
   "name": "sod-rabbits",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "SOD Rabbits Presentation",
   "scripts": {
     "dev": "next dev",

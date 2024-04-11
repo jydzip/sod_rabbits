@@ -5,8 +5,8 @@ import { GlobalStyle } from '../src/Styled'
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <>
-        <GlobalStyle />
-        <Component {...pageProps} />
+            <GlobalStyle />
+            <Component {...pageProps} />
         </>
     )
 }

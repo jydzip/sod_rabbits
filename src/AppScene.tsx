@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 import SceneManager from './scene';
 import HoverView from './HoverView';
@@ -14,12 +13,8 @@ const AppScene: React.FC = () => {
 
     useEffect(() => {
         if (sceneRef.current) {
-            sceneManager
-
-            const scene = sceneManager.scene;
             const cameraManager = sceneManager.getCameraManager().camera;
             const renderer = sceneManager.getRenderer().renderer;
-            const interaction = sceneManager.getInteraction();
 
             sceneRef.current.appendChild(renderer.domElement);
 

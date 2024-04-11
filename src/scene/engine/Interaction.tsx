@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import SceneManager from '..';
 import Step, { StepEnum, StepLabels } from '../steps/Step';
 import IntroStep from '../steps/IntroStep';
@@ -16,7 +15,6 @@ export const POSITION_STEP_DEFAULT = {
 }
 class Interaction {
     private scm: SceneManager;
-    private camera: THREE.PerspectiveCamera;
 
     currentStep: number;
     currentLabel: string;
@@ -25,7 +23,6 @@ class Interaction {
     constructor(scm: SceneManager) {
         console.log('[Initialization] Interaction');
         this.scm = scm;
-        this.camera = scm.getCameraManager().camera;
 
         this.currentStep = StepEnum.Null;
         this.currentLabel = StepLabels[this.currentStep];

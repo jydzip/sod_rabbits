@@ -1,13 +1,14 @@
 import * as THREE from 'three';
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
 
 import SceneManager from "..";
 import Step, { StepEnum, StepLabels } from "./Step";
 import RabbitSvg from '../../RabbitSvg';
-import styled from 'styled-components';
 import { InstructionMove } from '../objects/Rabbit';
 import { delay } from '../engine/Interaction';
-import { motion } from 'framer-motion';
 import { InfoIco, capitalize } from '../../Styled';
+import AnimatedText from '../../AnimatedText';
 
 
 export default class AStep extends Step {
@@ -43,7 +44,7 @@ export default class AStep extends Step {
         this.resetContent();
         this.setFooterHoverView(
             <>
-            <HeadsTitle>Communication of the rabbit</HeadsTitle>
+            <HeadsTitle>Rabbit's Communication<br/>by the position of ears:</HeadsTitle>
             <Heads>
                 <Head>
                     <img src='head_1.png' />
@@ -82,7 +83,7 @@ export default class AStep extends Step {
     private resetContent() {
         this.setContent("", (
             <>
-                <div className="sub white"><InfoIco /> <span className='vert-ico'>A shy animal, but very curious.</span></div>
+                <div className="sub light_gray"><InfoIco color='gray' /> <span className='vert-ico'>A shy animal, but very curious.</span></div>
             </>
         ));
     }
@@ -92,7 +93,11 @@ export default class AStep extends Step {
                 <SvgGlobal>
                     <RabbitSvg part={part} />
                 </SvgGlobal>
-                <Part>{capitalize(part)}</Part>
+                {part && (
+                    <Part>
+                        <AnimatedText text={capitalize(part)} ms={100} />
+                    </Part>
+                )}
                 {content}
             </>
         )
@@ -124,7 +129,7 @@ export default class AStep extends Step {
     }
 
     stade3() {
-        this.setContent("claw", (
+        this.setContent("legs", (
             <ul>
                 <li>Powerful jumps~</li>
                 <li>Run very fast.</li>

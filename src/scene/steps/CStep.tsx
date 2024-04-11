@@ -1,12 +1,11 @@
 import * as THREE from 'three';
-import * as TWEEN from '@tweenjs/tween.js';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 import SceneManager from "..";
 import Step, { StepEnum, StepLabels } from "./Step";
 import { RabbitAnimation } from '../objects/Rabbit';
 import { delay } from '../engine/Interaction';
-import { motion } from 'framer-motion';
 import AnimatedText from '../../AnimatedText';
 
 const POSITION_FRONT_CAMERA = new THREE.Vector3(1, 0, -4);
@@ -191,7 +190,7 @@ const TriggerGlobal = styled.div`
     position: relative;
 `
 const Trigger = styled(motion.div)`
-    font-size: 47px;
+    font-size: 53px;
     transform: translateX(-50%) translateY(-50%);
     position: absolute;
     left: 50%;
@@ -289,7 +288,7 @@ const FoodVisual = styled.div`
         display: inline-block;
         position: absolute;
         top: -7px;
-        font-size: 15px;
+        font-size: 17px;
         right: 9px;
         opacity: 0.7;
     }

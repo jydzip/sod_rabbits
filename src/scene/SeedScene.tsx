@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 import BasicLights from './engine/Light';
 import Ground from './objects/Ground';
 import Rabbit from './objects/Rabbit';

@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 import SceneManager from "..";
 import Step, { StepEnum, StepLabels } from "./Step";
@@ -7,8 +9,6 @@ import { delay } from '../engine/Interaction';
 import Vision1 from '../objects/Vision1';
 import Vision2 from '../objects/Vision2';
 import Rabbit, { RabbitAnimation } from '../objects/Rabbit';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
 
 export default class BStep extends Step {
     key = StepLabels[StepEnum.B];

@@ -189,45 +189,6 @@ export default class Rabbit extends ObjectGroup {
       }
     });
   }
-  // async setAnimation(animationName: string, loop = true, nextAnimationName?: string, force = false) {
-  //   return new Promise(async (resolve) => {
-  //     if (!force && animationName == this.selectedAnimation) {
-  //       return;
-  //     };
-  //     console.log(`[RABBIT] Animation ${animationName}${nextAnimationName ? ` -> ${nextAnimationName}` : ''}`);
-  //     if (this.mixer && this.model) {
-  //       this.stopAnimation();
-      
-  //       const clip = THREE.AnimationClip.findByName(this.animations, animationName);
-  //       const action = this.mixer.existingAction(clip);
-  //       this.selectedAnimation = animationName;
-  //       this.nextAnimation = nextAnimationName;
-
-  //       if (nextAnimationName) {
-  //         loop = false;
-  //       }
-  //       if (!loop) {
-  //         action.setLoop(THREE.LoopOnce, 0);
-  //       }
-  //       action.clampWhenFinished = true;
-  //       action.enabled = true;
-
-  //       const onAnimationFinished = () => {
-  //         this.mixer.removeEventListener('finished', onAnimationFinished);
-  //         if (nextAnimationName) {
-  //           action.stop();
-  //           this.setAnimation(nextAnimationName, true).then(() => {
-  //             resolve(true);
-  //           });
-  //         } else {
-  //           resolve(true);
-  //         }
-  //       };
-  //       this.mixer.addEventListener('finished', onAnimationFinished);
-  //       action.play();
-  //     }
-  //   });
-  // }
   stopAnimation() {
     this.mixer.stopAllAction();
   }
@@ -346,6 +307,7 @@ export default class Rabbit extends ObjectGroup {
   }
 
   public initGUI() {
+    if (!this.smc.gui) return;
     const gui = this.smc.gui;
     const rabbitFolder = gui.addFolder(`Rabbit ${!this.main ? ' B' : ''}`);
     const animationController = rabbitFolder.add(this, 'selectedAnimationName', RabbitAnimation).listen().name('Animation');

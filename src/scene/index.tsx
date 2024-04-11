@@ -9,7 +9,7 @@ import Interaction from './engine/Interaction';
 import UIManager from './engine/UIManager';
 import SeedScene from './SeedScene';
 
-let lastTimestamp = 0;
+const DEBUG = false;
 
 class SceneManager {
     private static instance: SceneManager | null = null;
@@ -27,10 +27,12 @@ class SceneManager {
     private clock: Clock;
 
     public seedScene: SeedScene;
-    public DEBUG = true;
+    public DEBUG: boolean;
   
     private constructor() {
-      this.gui = new dat.GUI();
+      this.DEBUG = DEBUG;
+      if (this.DEBUG) this.gui = new dat.GUI();
+
       this.uiManager = new UIManager();
       this.scene = new Scene();
       this.loader = new Loader(this);
